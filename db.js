@@ -10,10 +10,7 @@ const EscuelasExamenesModel = require('./models/escuelas_examenes');
 
 
 //inicia el conection
-const sequelize = new Sequelize('plataforma_supervisor_v1', 'root', '', {
-    host:'localhost' ,
-    dialect:'mysql'
-});
+const sequelize = new Sequelize('mysql://root:zylQvS5WwErLlu8OMQaf@containers-us-west-108.railway.app:7530/railway');
 
 
 //Se crean los modelos
