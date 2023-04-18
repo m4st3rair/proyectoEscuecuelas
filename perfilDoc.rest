@@ -1,0 +1,13 @@
+POST  http://localhost:3001/api/perfil_Doc
+Content-Type: application/json
+
+{
+    "id_usuario": 1,
+    "nombre_completo": "Ranita Feliz",
+    "num_tel": 123456789, 
+    "curp": "IARA970117HPLSMN01",
+    "especialidad": "Chefcito",
+    "cedula": 	9739365,
+    "dias_atencion": "Martes a Viernes",	
+    "horarios": "De 11 a 5"
+}

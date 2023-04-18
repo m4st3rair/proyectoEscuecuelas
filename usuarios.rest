@@ -1,0 +1,22 @@
+###
+GET http://localhost:3001/api/usuario/login/yoloXD/1234
+###
+GET http://localhost:3001/api/usuario/get-all
+###
+POST  http://localhost:3001/api/usuario/registrar
+Content-Type: application/json
+
+{
+    "userName": "yolo1",
+    "password": "123",
+    "tipo": "USUARIO"
+}
+
+###
+PUT http://localhost:3001/api/usuario/3
+Content-Type: application/jsonnot
+
+{
+    "password": "1234",
+    "tipo": "DOCTOR"
+}
