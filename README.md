@@ -1,1 +1,1 @@
-# proyectoEscuecuelas
+# poyectoEscuelas
