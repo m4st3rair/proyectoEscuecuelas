@@ -247,4 +247,38 @@ router.get('/publico/resultados/:idExamen/:idSupervisor', async(req, res)=>{
 
 
 
+
+router.get('/abrir/supervisor/:idExamen/:idSupervisor', async(req, res)=>{
+    //Primero se buscan las escuelas por el ID del supervidor
+    const{idExamen, idSupervisor}= req.params;    
+    const escuelas = await Escuela.findAll({where:{idUsuario: idSupervisor} });
+    
+    var escuelasTerminadas=[];
+    var escuelasFinal=[];
+    if(escuelas!= null){
+        const escuelasList = JSON.parse(JSON.stringify(escuelas));
+        
+        for(var x =0; x < escuelasList.length; x++){
+            var calificado = await EscuelaExamen.findOne({where:{idEscuela: escuelasList[x].id, idExamen } });
+            console.log(calificado);
+            if(calificado != null){
+                escuelasList[x].calificado = JSON.parse(JSON.stringify(calificado));
+                escuelasTerminadas.push(escuelasList[x]);
+            }
+        }
+    }
+    return res.json(escuelasTerminadas);
+});
+
+
+
+router.delete('/escuela-examen/:id', async(req, res)=>{
+    await EscuelaExamen.destroy({
+        where:{ id: req.params.id}
+    });
+
+    res.send("Registro eliminado");
+});
+ 
+
 module.exports=router;
