@@ -15,4 +15,26 @@ router.get('/', async (req, res)=>{
     res.send('API-ESCUELAS V0.0.1');
 });
 
+
+router.get('/webhook/', async (req, res)=>{
+    console.log("get");
+    console.log(req.body);
+    res.send('OK');
+});
+router.put('/webhook/', async (req, res)=>{    
+    console.log("put");
+    console.log(req.body);
+    res.send('OK');
+});
+router.post('/webhook/', async (req, res)=>{
+    console.log("post");
+    console.log(req.body);
+    res.send('OK');
+});
+router.delete('/webhook/', async (req, res)=>{
+    console.log("delete");
+    console.log(req.body);
+    res.send('OK');
+});
+
 module.exports = router;

@@ -48,10 +48,8 @@ router.get('/excel/zona/:idSupervisor/:idExamen', async (req, res)=>{
     const {idSupervisor, idExamen} = req.params;
     const listaEscuelas = await getConcentradoEscuelas(idExamen, idSupervisor)
     const examenData = await getExamen(idExamen);
-    //console.log(listaEscuelas);
+    console.log(listaEscuelas);
     console.log(examenData);
-    const respuestasExamen = examenData.respuestas.respuestas.split(',');
-
 
 
     
@@ -91,9 +89,9 @@ router.get('/excel/zona/:idSupervisor/:idExamen', async (req, res)=>{
         const worksheet2 = workbook.addWorksheet(listaEscuelas[j].nombre); 
         worksheet2.columns = await getHeadersExamen(examenData);  
         
-        var alumnosList= await getAlumnosEscuela(listaEscuelas[j], respuestasExamen);
+        var alumnosList= await getAlumnosEscuela(listaEscuelas[j]);
         
-        //console.log(alumnosList);
+        console.log(alumnosList);
         // Looping through User data
         counter = 1;
         
@@ -137,7 +135,7 @@ router.get('/excel/zona/:idSupervisor/:idExamen', async (req, res)=>{
 
 
     try {
-        var fileName = `${examenData.nombre}.xlsx`;
+        var fileName = 'Escuela_.xlsx';
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         await workbook.xlsx.write(res);
@@ -159,19 +157,18 @@ async function getHeadersExamen (examenAux){
 
     ];
     for(var i = 0; i< examenAux.noPreguntas; i++){
-        headers.push({header:`No ${i+1}`, key:`no${i+1}`, width: 10});
-        headers.push({header:`R No ${i+1}`, key:`r_no${i+1}`, width: 10});
+        headers.push({header:`No ${i+1}`, key:`no${i+1}`, width: 10})
     }
 
     return headers;
 }
 
-async function getAlumnosEscuela(escuelaAux, respuestasExamen){
+async function getAlumnosEscuela(escuelaAux){
     var listaAlumnos=[];
     const alu= escuelaAux.alumnos;
 
     for(var x =0 ; x < alu.length; x++){
-        //console.log(alu[x]);
+        console.log(alu[x]);
         var aluAux ={
             clave:escuelaAux.clave, 
             nombre: alu[x].nombre,  
@@ -181,8 +178,7 @@ async function getAlumnosEscuela(escuelaAux, respuestasExamen){
         };
         var rN =alu[x].respuestas.respuestas.split(",");
         for(var y =0; y<rN.length; y++){
-            aluAux[`no${y+1}`]= rN[y];
-            aluAux[`r_no${y+1}`]= respuestasExamen[y]==rN[y]? '✓': '✗';
+            aluAux[`no${y+1}`]=rN[y];
         }
         listaAlumnos.push(aluAux);
     }
@@ -204,6 +200,7 @@ async function getConcentradoEscuelas(idExamen, idSupervisor){
         
         for(var x =0; x < escuelasList.length; x++){
             var calificado = await EscuelaExamen.findOne({where:{idEscuela: escuelasList[x].id, idExamen } });
+            console.log(calificado);
             if(calificado != null){
                 escuelasList[x].calificado = JSON.parse(JSON.stringify(calificado));
                 escuelasTerminadas.push(escuelasList[x]);
@@ -223,19 +220,30 @@ async function getConcentradoEscuelas(idExamen, idSupervisor){
             if(alumnosRes!= null){
     
                 const newConsulta2 = JSON.parse(JSON.stringify(alumnosRes));
+                console.log(newConsulta2);
                 newConsulta[i].resultado=newConsulta2.resultado;
         
                 const respuestasE = await Respuesta.findOne({
                     where:{ idAlumno: newConsulta[i].id, idExamen: idExamen}
                 });
+                console.log(respuestasE);
                 if(respuestasE!= null){
                     newConsulta[i].respuestas=JSON.parse(JSON.stringify(respuestasE));
                     alumnosSalida.push(newConsulta[i]);
                 }
+    
             }
+    
         }
-        escuelasTerminadas[y].alumnos=alumnosSalida;  
+        escuelasTerminadas[y].alumnos=alumnosSalida;
+        
     }
+
+    
+    
+
+
+
    return escuelasTerminadas;
 }
 
@@ -249,10 +257,14 @@ async function getExamen(idExamen){
 
     if(consulta!= null){
         var newConsulta = JSON.parse(JSON.stringify(consulta));
+        console.log(newConsulta);
+        
         const respuestasE = await Respuesta.findOne({
             where:{ idAlumno: -1, idExamen:newConsulta.id}
         });
+        console.log(respuestasE);
         newConsulta.respuestas=JSON.parse(JSON.stringify(respuestasE));
+        
         return newConsulta;
     }
 
