@@ -1,3 +1,4 @@
+const util = require('util');
 const router = require("express").Router();
 const apiUsuarios = require('./api/usuarios');
 const apiAlumnos = require('./api/alumnos');
@@ -18,22 +19,23 @@ router.get('/', async (req, res)=>{
 
 router.get('/webhook/', async (req, res)=>{
     console.log("get");
-    console.log(req.body);
+    console.log(util.inspect(req.body, false, null, true /* enable colors */))
     res.send('OK');
 });
 router.put('/webhook/', async (req, res)=>{    
     console.log("put");
-    console.log(req.body);
+    console.log(util.inspect(req.body, false, null, true /* enable colors */))
     res.send('OK');
 });
 router.post('/webhook/', async (req, res)=>{
     console.log("post");
-    console.log(req.body);
+    console.log(util.inspect(req.body, false, null, true /* enable colors */))
     res.send('OK');
 });
+
 router.delete('/webhook/', async (req, res)=>{
     console.log("delete");
-    console.log(req.body);
+    console.log(util.inspect(req.body, false, null, true /* enable colors */))
     res.send('OK');
 });
 
