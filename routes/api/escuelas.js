@@ -34,15 +34,9 @@ router.put('/:id', async(req, res)=>{
     await Escuela.update(req.body, {
         where:{ id: req.params.id}
     });
+
     res.send('Registro Actualizado');
 });
-
-router.get('/supervisor/:id', async(req, res)=>{
-    console.log(req.params.id);
-    const respuesta = await Escuela.findAll({ where:{ idUsuario: req.params.id}});
-    res.json(respuesta);
-});
-
 router.get('/:id', async(req, res)=>{
     const respuesta = await Escuela.findOne({where: {id: req.params.id}}); //Regresa un Perfil por ID
     res.json(respuesta);

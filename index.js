@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api', apiRouter);
 
-
-app.listen(3001, ()=>{
-console.log("Servidor en puerto 3001");
+var port = process.env.PORT || 3001;
+app.listen(port, '0.0.0.0', ()=>{
+console.log("Servidor en puerto ", port);
 });

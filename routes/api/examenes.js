@@ -11,7 +11,19 @@ router.get('/get-all', async (req, res)=>{
 router.post('/', 
 //[    check('nombre', 'El nombre del Examen es obligatorio').not().isEmpty() ], 
 async(req, res,)=>{
-    const examen = await Examenes.create(req.body);    
+    const errors = validationResult(req);
+//    if(!errors.isEmpty() ){        return res.status(422).json({errores: errors.array()})}
+    const examen = await Examenes.create(req.body);
+    
+    console.log(examen);
+    const {preguntas} = req.body;
+    console.log("preguntas");
+
+    var preguntasList=[];
+    for(var i = 0 ; i<preguntas.length; i++ ){
+        preguntasList.push(preguntas[i].respuesta);
+    }
+    const respuesta = await Respuesta.create({'idAlumno': -1, 'idExamen': examen.dataValues.id, 'respuestas':preguntasList.toString() });    
     res.json(examen);
 });
 
@@ -52,12 +64,19 @@ router.get('/lista/:id', async(req, res)=>{
         where:{ idUsuario: req.params.id}
     });
     const newConsulta = JSON.parse(JSON.stringify(consulta));
-    for(var i=0; i<newConsulta.length; i++){
-        console.log(newConsulta[i]);
-        const secciones = JSON.parse(newConsulta[i].seccion);
-        newConsulta[i].seccion=secciones;
+    for(var i =0 ; i<newConsulta.length; i++){
+        try {
+            const respuestasE = await Respuesta.findOne({
+                where:{ idAlumno: -1, idExamen:newConsulta[i].id}
+            });
+            console.log(respuestasE);
+            newConsulta[i].respuestas=JSON.parse(JSON.stringify(respuestasE));
+            
+        } catch (error) {
+            newConsulta[i].respuestas=[];
+        }
+        
     }
-
 
     console.log(newConsulta);
     res.json(newConsulta);
@@ -227,5 +246,39 @@ router.get('/publico/resultados/:idExamen/:idSupervisor', async(req, res)=>{
 });
 
 
+
+
+router.get('/abrir/supervisor/:idExamen/:idSupervisor', async(req, res)=>{
+    //Primero se buscan las escuelas por el ID del supervidor
+    const{idExamen, idSupervisor}= req.params;    
+    const escuelas = await Escuela.findAll({where:{idUsuario: idSupervisor} });
+    
+    var escuelasTerminadas=[];
+    var escuelasFinal=[];
+    if(escuelas!= null){
+        const escuelasList = JSON.parse(JSON.stringify(escuelas));
+        
+        for(var x =0; x < escuelasList.length; x++){
+            var calificado = await EscuelaExamen.findOne({where:{idEscuela: escuelasList[x].id, idExamen } });
+            console.log(calificado);
+            if(calificado != null){
+                escuelasList[x].calificado = JSON.parse(JSON.stringify(calificado));
+                escuelasTerminadas.push(escuelasList[x]);
+            }
+        }
+    }
+    return res.json(escuelasTerminadas);
+});
+
+
+
+router.delete('/escuela-examen/:id', async(req, res)=>{
+    await EscuelaExamen.destroy({
+        where:{ id: req.params.id}
+    });
+
+    res.send("Registro eliminado");
+});
+ 
 
 module.exports=router;

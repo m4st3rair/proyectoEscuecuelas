@@ -1,4 +1,3 @@
-const util = require('util');
 const router = require("express").Router();
 const apiUsuarios = require('./api/usuarios');
 const apiAlumnos = require('./api/alumnos');
